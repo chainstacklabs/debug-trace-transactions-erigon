@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <title>Debug & trace transactions</title>
+
+</head>
+
+<body>
+    <div class="parent">
+        <div class="div1">
+            <h1 class="center">Test the debug and trace modules in Erigon</h1>
+            <h2 class="center">This app allows to call the <code>trace_transaction</code>, or <code>debug_traceTransaction</code> method</h2>
+            <h2 class="center">trace_transaction</h2>
+            <p><code>trace_transaction</code> is one of the methods available in Erigon to <strong>trace</strong>, and it takes a transaction hash as input, allowing you to see the internal functions calls made into a smart contract.
+            <p>
+            <p>Check this <a href="https://gist.github.com/soos3d/285a5483d22970c7bdffb0db3474f71f" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
+
+            <h2 class="center">debug_traceTransaction</h2>
+            <p>The debug function in Erigon is very useful during the development of a smart contract to understand why a transaction is failing.</p>
+
+            <p><code>debug_traceTransaction</code> takes a transaction hash as input and returns logs of low-level opcode that can be used to show what happens step by step during the process and what is the reason for it failing.
+            <p>
+            <p>Check this <a href="https://gist.github.com/soos3d/712aa25240c968e6a22514a9b67443ee" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
+        </div>
+
+        <div class="div2">
+            <h3>Instructions</h3>
+            <ol>
+                <li>Have access to an Erigon node endpoint</li>
+                <ul>You can deploy one with Chainstack!</ul>
+                <ul><a href="https://console.chainstack.com/user/account/create" target="_blank">Sign up on Chainstack</a></ul>
+                <ul><a href="https://docs.chainstack.com/platform/join-a-public-network" target="_blank">Deploy a node</a></ul>
+                <li>Insert the enpoint URL in the node input field</li>
+                <li>Paste a transaction hash in the transaction field</li>
+                <li>Choose if you want to trace or debug the transaction</li>
+            </ol>
+
+        </div>
+
+        <div class="div3">
+            <h2>Test debug and trace</h2>
+            <label>Input your Erigon node URL</label>
+            <input type="text" id="node" /><br>
+
+            <label>Input the transaction hash to analyze</label>
+            <input type="text" id="hash" /><br>
+
+            <label>Trace is only available with Erigon</label>
+            <button onclick="trace()">Trace &#128373</button>
+
+            <label>The transaction must to be within the past 128 blocks if you are using a full node running Geth</label>
+            <button onclick="debug()">Debug &#128030</button>
+        </div>
+
+        <div class="div4">
+            <h2>Data retrived</h2>
+            <button onclick="clean()">Clear &#128165</button>
+            <label id="info"></label>
+            <pre id="result" style="width:900px;overflow:auto"></pre>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
