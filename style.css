@@ -9,18 +9,25 @@ body {
 
 .parent {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, 0fr);
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 0fr);
+    grid-column-gap: 3px;
+    grid-row-gap: 5px;
+}
+
+.speedRes {
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 20px;
+    width: 100px;
 }
 
 .div1 {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-area: 1 / 1 / 2 / 3;
 }
 
 .div2 {
-    grid-area: 2 / 1 / 3 / 2;
+    grid-area: 2 / 1 / 3 / 3;
     background-color: #FFD700;
     height: 300px;
     border-style: solid;
@@ -35,11 +42,12 @@ body {
 
 .div3 {
     grid-area: 3 / 1 / 4 / 2;
-    background-color: #0095ff;
+    background-color: #9932CC;
     height: 500px;
     border-style: solid;
     border-width: 3px;
     border-radius: 8px;
+    padding-top: 10px;
     padding-top: 10px;
     display: flex;
     justify-content: center;
@@ -48,7 +56,37 @@ body {
 }
 
 .div4 {
-    grid-area: 4 / 1 / 5 / 2;
+    grid-area: 3 / 2 / 4 / 3;
+    background-color: #9932CC;
+    height: 500px;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 8px;
+    padding-top: 10px;
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.div5 {
+    grid-area: 4 / 1 / 5 / 3;
+    background-color: #0095ff;
+    height: 800px;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 8px;
+    padding-top: 10px;
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.div6 {
+    grid-area: 5 / 1 / 6 / 3;
     background-color: Tomato;
     border-style: solid;
     line-height: 1.4;
@@ -59,6 +97,10 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+.buttons {
+    display: inline;
 }
 
 button {
@@ -73,4 +115,8 @@ label {
 
 input {
     width: 480px;
+    padding: 10px 15px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
 }
