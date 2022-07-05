@@ -99,6 +99,14 @@ body {
     flex-direction: column;
 }
 
+ul {
+    margin-top: 4px;
+}
+
+li {
+    margin-top: 4px;
+}
+
 .buttons {
     display: inline;
 }
