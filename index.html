@@ -16,14 +16,14 @@
             <h1 class="center">Test the debug and trace modules in Erigon</h1>
             <h2 class="center">This app allows to call the <code>trace_transaction</code>, or <code>debug_traceTransaction</code> method</h2>
             <h2 class="center">trace_transaction</h2>
-            <p><code>trace_transaction</code> is one of the methods available in Erigon to <strong>trace</strong>, and it takes a transaction hash as input, allowing you to see the internal functions calls made into a smart contract.
+            <p><b>trace_transaction</b> is one of the methods available in Erigon to <strong>trace</strong>, and it takes a transaction hash as input, allowing you to see the internal functions calls made into a smart contract.
             <p>
             <p>Check this <a href="https://gist.github.com/soos3d/285a5483d22970c7bdffb0db3474f71f" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
 
             <h2 class="center">debug_traceTransaction</h2>
             <p>The debug function in Erigon is very useful during the development of a smart contract to understand why a transaction is failing.</p>
 
-            <p><code>debug_traceTransaction</code> takes a transaction hash as input and returns logs of low-level opcode that can be used to show what happens step by step during the process and what is the reason for it failing.
+            <p><b>debug_traceTransaction</b> takes a transaction hash as input and returns logs of low-level opcode that can be used to show what happens step by step during the process and what is the reason for it failing.
             <p>
             <p>Check this <a href="https://gist.github.com/soos3d/712aa25240c968e6a22514a9b67443ee" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
         </div>
@@ -43,21 +43,49 @@
         </div>
 
         <div class="div3">
-            <h2>Test debug and trace</h2>
+            <h2 class="center">Input nodes and transaction hash</h2>
             <label>Input your Erigon node URL</label>
-            <input type="text" id="node" /><br>
+            <input type="text" id="erigon"><br>
+
+            <label>Input your Geth node URL</label>
+            <input type="text" id="geth"><br>
 
             <label>Input the transaction hash to analyze</label>
-            <input type="text" id="hash" /><br>
-
-            <label>Trace is only available with Erigon</label>
-            <button onclick="trace()">Trace &#128373</button>
-
-            <label>The transaction must to be within the past 128 blocks if you are using a full node running Geth</label>
-            <button onclick="debug()">Debug &#128030</button>
+            <input type="text" id="hash"><br>
         </div>
 
         <div class="div4">
+            <h2 class="center">Test debug and trace</h2>
+            <label>Trace is only available with Erigon</label><br>
+            <button onclick="trace()">Trace &#128373</button><br>
+            <button onclick="debugErigon()">Debug Erigon &#128030</button><br>
+
+            <label>The transaction must to be within the past 128 blocks if you are using a full node running Geth</label><br>
+
+            <button onclick="debugGeth()">Debug Geth &#128030</button><br>
+        </div>
+
+        <div class="div5">
+            <h2>Analysis</h2>
+            <h3>Compare Erigon and Geth calling the <b>debug_traceTransaction</b> method</h3>
+
+            <button onclick="compareNodes()">Compare &#128064</button>
+
+            <h3>Speed </h3>
+            <label>Erigon retrieving speed</label>
+            <label id="SpeedEri" class="speedRes"></label>
+            <label>Geth retrieving speed</label>
+            <label id="SpeedGeth" class="speedRes"></label>
+
+            <h3>Data</h3>
+            <label>Erigon data retrived</label>
+            <label id="dataEri" class="speedRes"></label>
+            <label>Geth data retrieved</label>
+            <label id="dataGeth" class="speedRes"></label>
+
+        </div>
+
+        <div class="div6">
             <h2>Data retrived</h2>
             <button onclick="clean()">Clear &#128165</button>
             <label id="info"></label>
