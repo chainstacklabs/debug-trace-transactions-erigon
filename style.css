@@ -107,18 +107,28 @@ li {
     margin-top: 4px;
 }
 
-.buttons {
-    display: inline;
+.speedRes {
+    padding: 20px;
+    margin: 10px;
+    background-color: transparent;
+}
+
+.infoTab {
+    background-color: transparent;
+    border-style: none;
 }
 
 button {
     width: 150px;
     padding: 8px;
-    border-radius: 10px;
+    border-radius: 20px;
+    
 }
 
 label {
-    padding: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: antiquewhite;
 }
 
 input {
