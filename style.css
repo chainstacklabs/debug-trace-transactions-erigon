@@ -17,9 +17,12 @@ body {
 
 .speedRes {
     border-style: solid;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 10px;
     border-width: 2px;
     border-radius: 20px;
-    width: 100px;
+    background-color: transparent;
 }
 
 .div1 {
@@ -29,7 +32,7 @@ body {
 .div2 {
     grid-area: 2 / 1 / 3 / 3;
     background-color: #FFD700;
-    height: 300px;
+    height: 350px;
     border-style: solid;
     border-width: 3px;
     border-radius: 8px;
@@ -72,14 +75,15 @@ body {
 
 .div5 {
     grid-area: 4 / 1 / 5 / 3;
+    text-align: center;
     background-color: #0095ff;
-    height: 800px;
+    height: 550px;
     border-style: solid;
     border-width: 3px;
     border-radius: 8px;
     padding-top: 10px;
     padding-top: 10px;
-    display: flex;
+    display: inline-block;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -99,18 +103,17 @@ body {
     flex-direction: column;
 }
 
+h3 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
 ul {
     margin-top: 4px;
 }
 
 li {
     margin-top: 4px;
-}
-
-.speedRes {
-    padding: 20px;
-    margin: 10px;
-    background-color: transparent;
 }
 
 .infoTab {
