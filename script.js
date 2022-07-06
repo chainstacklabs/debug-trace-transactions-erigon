@@ -1,5 +1,5 @@
 
-// call the trace_transaction method using the node and hash from the input
+// call the trace_transaction method using the Erigon node and hash from the input
 async function trace() {
 
     //retrieve the users inputs 
@@ -10,32 +10,35 @@ async function trace() {
     const provider = new ethers.providers.JsonRpcProvider(node_url);
     const blockNum = await provider.getBlockNumber();
     console.log(`The latest block is: ${blockNum}`);
-
-    // call and measure the execution time of the callTrace function
     console.log('Tracing...')
+
+    // update info label
     document.getElementById("info").innerHTML = "Tracing..."
 
+    // call and measure the excecution time of the callTrace function
     const start = Date.now();
     const traceResult = await callTrace(txHash, provider);
     const end = Date.now();
     document.getElementById("SpeedEri").innerHTML = `${end - start} ms`
 
-    console.log('done')
     //console.log(traceTx);
+    console.log('done')
 
     // Display the JSON response. 
     const jsonResponse = JSON.stringify(traceResult, null, 4)
     document.getElementById("result").innerHTML = jsonResponse
-    
-    // calculate size of the response
-    const size = new TextEncoder().encode(jsonResponse).length
-    const kiloBytes = size / 1024;
-    //const megaBytes = kiloBytes / 1024;
-    
-    // The trace response is usually small, that's why I'm using KB here
-    document.getElementById("dataEri").innerHTML = `${kiloBytes.toFixed(3)} KB`
 
+    // update info label
     document.getElementById("info").innerHTML = "Done retrieving"
+
+    // calculate the aproximate size of the object, trace is usually small and getSizeKb returns a value in kB
+    const size = getSizeKb(jsonResponse)
+    //const megaBytes = size / 1024;
+    document.getElementById("dataEri").innerHTML = `${size} kB`
+
+    // call getLines to count how many lines are present in the JSON
+    const lines = getLines(traceResult)
+    document.getElementById("linesEri").innerHTML = lines
 }
 
 // call the debug_traceTransaction method using the Erigon URL and hash from the input
@@ -49,29 +52,32 @@ async function debugErigon() {
     const provider = new ethers.providers.JsonRpcProvider(node_url);
     const blockNum = await provider.getBlockNumber();
     console.log(`The latest block is: ${blockNum}`);
-
-    // call and measure the execution time of the debug function
     console.log('Debugging...')
+
+    // update info label
     document.getElementById("info").innerHTML = "Debugging..."
-    
+
+    // call and measure the excecution time of the callDebugErigon function
     const start = Date.now();
     const debugResult = await callDebugErigon(txHash, provider);
     const end = Date.now();
     document.getElementById("SpeedEri").innerHTML = `${end - start} ms`
 
-    document.getElementById("info").innerHTML = "Done retrieving"
-
     // display Json response
     const jsonResponse = JSON.stringify(debugResult, null, 4)
     document.getElementById("result").innerHTML = jsonResponse
 
-    // calculate size of the response 
-    const size = new TextEncoder().encode(jsonResponse).length
-    const kiloBytes = size / 1024;
-    const megaBytes = kiloBytes / 1024;
+    // update info label
+    document.getElementById("info").innerHTML = "Done retrieving"
 
-    document.getElementById("dataEri").innerHTML = `${megaBytes.toFixed(2)} MB`
+    // calculate the aproximate size of the object, trace is usually small and getSizeKb returns a value in kB
+    const size = getSizeKb(jsonResponse)
+    const megaBytes = size / 1024;
+    document.getElementById("dataEri").innerHTML = `${megaBytes.toFixed(2)} mB`
 
+    // call getLines to count how many lines are present in the JSON
+    const lines = getLines(debugResult)
+    document.getElementById("linesEri").innerHTML = lines
 }
 
 // call the debug_traceTransaction method using the Geth URL and hash from the input
@@ -85,30 +91,32 @@ async function debugGeth() {
     const provider = new ethers.providers.JsonRpcProvider(node_url);
     const blockNum = await provider.getBlockNumber();
     console.log(`The latest block is: ${blockNum}`);
-
-    // call and measure the execution time of the debug function
     console.log('Debugging...')
+
+    // update info label
     document.getElementById("info").innerHTML = "Debugging..."
 
+    //  call and measure the excecution time of the callDebugGeth function
     const start = Date.now();
     const debugResult = await callDebugGeth(txHash, provider);
     const end = Date.now();
     document.getElementById("SpeedGeth").innerHTML = `${end - start} ms`
 
+    // update info label
     document.getElementById("info").innerHTML = "Done retrieving"
 
     // display Json response
     const jsonResponse = JSON.stringify(debugResult, null, 4)
     document.getElementById("result").innerHTML = jsonResponse
 
-    // calculate size of the response 
-    const size = new TextEncoder().encode(jsonResponse).length
-    const kiloBytes = size / 1024;
-    const megaBytes = kiloBytes / 1024;
-    console.log(megaBytes)
+    // calculate the aproximate size of the object, getSizeKb returns a value in kB
+    const size = getSizeKb(jsonResponse)
+    const megaBytes = size / 1024;
+    document.getElementById("dataGeth").innerHTML = `${megaBytes.toFixed(2)} mB`
 
-    document.getElementById("dataGeth").innerHTML = `${megaBytes.toFixed(2)} MB`
-
+    // call getLines to count how many lines are present in the JSON
+    const lines = getLines(debugResult)
+    document.getElementById("linesGeth").innerHTML = lines
 }
 
 // call the trace_transaction method
@@ -173,10 +181,9 @@ async function compareNodes() {
     // connects to both nodes
     const eriProvider = new ethers.providers.JsonRpcProvider(eri_url);
     const gethProvider = new ethers.providers.JsonRpcProvider(geth_url);
-
     console.log("Comparing...")
-    
-    // make the calls and time them
+
+    // measure the time to complete the 2 functions, callDebugErigon and callDebugGeth
     const startEri = Date.now();
     const traceResult = await callDebugErigon(txHash, eriProvider);
     const endEri = Date.now();
@@ -189,40 +196,71 @@ async function compareNodes() {
     document.getElementById("SpeedGeth").innerHTML = `${end - start} ms`
     console.log("Done Geth")
 
-    // calculate size of the responses
+    // calculate the approximate size of the responses 
     const jsonResponseEri = JSON.stringify(traceResult, null, 4)
     const jsonResponseGeth = JSON.stringify(debugResult, null, 4)
-    
-    // Erigon response
-    const sizeEri = new TextEncoder().encode(jsonResponseEri).length
 
-    const kiloBytesEri = sizeEri / 1024;
-    const megaBytesEri = kiloBytesEri / 1024;
+    const sizeEri = getSizeKb(jsonResponseEri)
+    const megaBytesEri = sizeEri / 1024;
+    document.getElementById("dataEri").innerHTML = `${megaBytesEri.toFixed(2)} mB`
 
-    document.getElementById("dataEri").innerHTML = `${megaBytesEri.toFixed(2)} MB`
-    
-    // Geth response
-    const sizeGeth = new TextEncoder().encode(jsonResponseGeth).length
-    const kiloBytesGeth = sizeGeth / 1024;
-    const megaBytesGeth = kiloBytesGeth / 1024;
+    const sizeGeth = getSizeKb(jsonResponseGeth)
+    const megaBytesGeth = sizeGeth / 1024;
+    document.getElementById("dataGeth").innerHTML = `${megaBytesGeth.toFixed(2)} mB`
 
-    document.getElementById("dataGeth").innerHTML = `${megaBytesGeth.toFixed(2)} MB`
+    // call getLines to count how many lines are present in the JSON
+    const linesEri = getLines(traceResult)
+    document.getElementById("linesEri").innerHTML = linesEri
+
+    // call getLines to count how many lines are present in the JSON
+    const linesGeth = getLines(debugResult)
+    document.getElementById("linesGeth").innerHTML = linesGeth
 
     console.log("Done comparing")
 }
 
-// clear the screen from the previous results
+// return the approximate size of the stringified JSON object 
+function getSizeKb(object) {
+    const bytes = new TextEncoder().encode(object).length
+    const kb = (bytes / 1024).toFixed(2);
+    return kb
+}
+
+// count the lines retrieved 
+function getLines(object) {
+    
+    const parsed = JSON.stringify(object, null, 4)
+    const lines = parsed.split("\n")
+
+    let length = 0;
+    for(let i = 0; i < lines.length; ++i)
+    length++;
+
+    console.log("lines:"+length)
+
+    return length
+}
+
+// clear the screen from the previous result
 function clean() {
     let div = document.getElementById('result');
     let info = document.getElementById('info');
+    div.innerHTML = "";
+    info.innerHTML = "";
+}
+
+// clear the screen from the data stats
+function cleanStats() {
     let timeEri = document.getElementById("SpeedEri")
     let timeGeth = document.getElementById("SpeedGeth")
     let sizeEri = document.getElementById("dataEri")
     let sizeGeth = document.getElementById("dataGeth")
-    div.innerHTML = "";
-    info.innerHTML = "";
+    let linesEri = document.getElementById("linesEri")
+    let linesGeth = document.getElementById("linesGeth")
     timeEri.innerHTML = "";
     timeGeth.innerHTML = "";
     sizeEri.innerHTML = "";
     sizeGeth.innerHTML = "";
+    linesEri.innerHTML = "";
+    linesGeth.innerHTML = "";
 }
