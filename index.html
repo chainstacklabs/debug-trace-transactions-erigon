@@ -29,7 +29,7 @@
         </div>
 
         <div class="div2">
-            <h3>Instructions</h3>
+            <h2>Instructions</h2>
             <ol>
                 <li>Have access to an Erigon and Geth node endpoints</li>
                 <ul>You can deploy one with Chainstack!</ul>
@@ -73,8 +73,9 @@
             <h3>Compare Erigon and Geth calling the <b>debug_traceTransaction</b> method</h3>
 
             <button onclick="compareNodes()">Compare &#128064</button>
+            <button onclick="cleanStats()">Clear stats &#128165</button>
 
-            <h3>Speed </h3>
+            <h3>Speed</h3>
             <label>Erigon retrieving speed</label>
             <label id="SpeedEri" class="speedRes"></label>
             <label>Geth retrieving speed</label>
@@ -85,6 +86,12 @@
             <label id="dataEri" class="speedRes"></label>
             <label>Geth data retrieved</label>
             <label id="dataGeth" class="speedRes"></label>
+
+            <h3>Lines retrieved</h3>
+            <label>Erigon lines retrived</label>
+            <label id="linesEri" class="speedRes"></label>
+            <label>Geth lines retrieved</label>
+            <label id="linesGeth" class="speedRes"></label>
 
         </div>
 
