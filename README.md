@@ -72,3 +72,97 @@ You will notice that a ```debug_traceTransaction``` call made to a node running 
 
 ![screely-1657220353355](https://user-images.githubusercontent.com/99700157/177854569-2526d39f-3a14-4ce0-b862-c332ac2eb2c9.png)
 
+The ```trace_transaction``` method is only available using Erigon, so it won't be possible to compare to Geth, so this app compares the two clients on the ```debug_traceTransaction``` method. 
+
+In short, Erigon retrieves more data, and it takes a bit longer to do it compared to Geth.
+
+## Time to explain the code
+
+### Ethers library | ```ethers.js```
+
+This app uses the [Ethers library](https://docs.ethers.io/v5/) to interact with the nodes and make the requests. The nice part is that there is no need to install any dependencies as the [Etheres docs](https://docs.ethers.io/v5/getting-started/#getting-started--importing--web-browser) explain how to import the library into the browser directly.
+
+> **Note** that this method is generally accepted for tests and prototypes, but it is recommended to copy the [Ethers library](https://cdn.ethers.io/lib/ethers-5.6.esm.min.js) to your web server and serve it yourself (for security reasons).
+
+In this case, we import it into the ```index.html``` file with this line:
+
+```html
+<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+```
+
+> Make sure to take a look at the [Etheres docs](https://docs.ethers.io/v5/getting-started/#getting-started--importing--web-browser) to keep the library up to date.
+
+### ```script.js``` 
+
+The bulk of the functionality is in the ```script.js``` file, where you can find the functions that power the buttons on the webpage. 
+
+Generally, when interacting with the blockchain and sending requests to a node, we need to establish a connection to it. Using the Ethers library, we do it by creating a ```provider``` variable, like this:
+
+```js
+const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
+```
+
+Then you can send requests to the node like this:
+
+```js
+const traceTx = await provider.send("trace_transaction", [TRANSACTION_HASH, ]);
+```
+
+In this app, when you click one of the buttons, a function will retrieve the node URLs and the transaction hash, use the node URLs to create a ```provider``` variable, and then call another function that holds the instruction to send the request to the node. 
+
+The code in the ```script.js``` file is heavily commented, perhaps more than you usually see, but I want to make sure that every step is explained so that you won't have any doubt. 
+
+Now, we'll break down the function called when you press the ```trace``` button. Note that the principle applies to the other buttons as well.
+
+### Trace button and ```trace()``` function
+
+This is the HTML code for the button itself in the ```index.html``` file:
+
+```html
+<button onclick="trace()">Trace &#128373</button>
+```
+
+The ```onclick="trace()"``` event attribute tells the button element to call the ```trace()``` function when the user clicks it. 
+
+Let's break down the ```trace()``` function:
+
+The first step will be to retrieve the data that the user inputs, as the script needs to extract the node URL and the transaction hash to use.
+
+```js
+//retrieve the users inputs 
+const node_url = document.getElementById("erigon").value;
+const txHash = document.getElementById("hash").value;
+```
+
+We use the ```document.getElementById("ID_NAME").value``` command to take the content of the input boxes. 
+
+Then we use these variables to connect to the node.
+
+```js
+// Create an instance to connect to the node
+const provider = new ethers.providers.JsonRpcProvider(node_url);
+
+//log getBlockNumber to verify the connection is successful
+const blockNum = await provider.getBlockNumber();
+console.log(`The latest block is: ${blockNum}`);
+console.log('Tracing...')
+```
+
+> **Note** that we already call the ```eth_blockNumber``` method and log the result in the console. This is just to verify that the connection works, and you will often see similar things across the code. Logging data to the console is a common practice used by developers to keep track of what happens and debug. 
+
+After the node instance is created, we update the label that keeps track of the phases in the HTML. You will often find lines like this:
+
+```js
+// update info label
+document.getElementById("info").innerHTML = "Tracing..."
+```
+The next session is the part where we call the ```trace_transaction``` method and measure how long it takes to be complete. 
+
+```js
+// call and measure the excecution time of the callTrace function
+const start = Date.now();
+const traceResult = await callTrace(txHash, provider);
+const end = Date.now();
+document.getElementById("SpeedEri").innerHTML = `${end - start} ms`
+```
+
