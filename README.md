@@ -166,3 +166,5 @@ const end = Date.now();
 document.getElementById("SpeedEri").innerHTML = `${end - start} ms`
 ```
 
+The ```Date.now()``` function returns a number resenting the milliseconds elapsed since the UNIX epoch, and this is used to measure how long it takes to execute the ```callTrace()``` function by taking a snapshot just before and immediately after the ```callTrace()``` is called and making the difference. Giving a result of how many milliseconds the excecution took.
+
