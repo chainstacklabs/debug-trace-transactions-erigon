@@ -207,6 +207,18 @@ is the command that makes the call to the node, and you can see that we use the 
 
 The RPC call itself is enclosed in a ```try/catch``` pattern; so that if something went wrong, the user receives an alert with some possible causes, and the error returned is logged in the console.
 
+#### Display the response in the page
+
+After we retrieve the data we parse is into a readable format and display it to the user, much like [Postman](https://www.postman.com/) would.
+
+```js
+// Display the JSON response. 
+const jsonResponse = JSON.stringify(traceResult, null, 4)
+document.getElementById("result").innerHTML = jsonResponse
+```
+
+To do this we use the ```JSON.stringify()``` function adding four extra indent spaces to make it easier to read, then display it in the HTML page.
+
 #### Measure the size in kB/MB of the data restrieved from the blockchain
 
 This section of the function makes a calculation of the size of the response:
@@ -231,6 +243,18 @@ function getSizeKb(object) {
 }
 ```
 
-We first transform the response into a string with 0 added spaces to maintain the estimate as accurate as possible. Then, call the ```.lenght``` method on the ```TextEncoder()``` function of the parsed response to receiving an approximate size in bytes. At this point, we just need some math to convert it into kB and MB.
+We first transform the response into a string with zero added spaces to maintain the estimate as accurate as possible. Then, call the ```.lenght``` method on the ```TextEncoder()``` function of the parsed response to calculate an approximate size in bytes. At this point, we just need some math to convert it into kB and MB.
 
 You will see this pattern often throughout the code.
+
+#### Calculate the numbers of lines retrieved in the parsed object
+
+The last section of the function calculates the numbers of lines after the object is parsed. This is to give a metric to be able to compare the responses between a node running Erigon and one runnig Geth.
+
+```js
+// call getLines() to count how many lines are present in the JSON
+const lines = getLines(traceResult)
+document.getElementById("linesEri").innerHTML = lines
+```
+
+The ```getLines()``` function simply splits the parsed object by whitespaces ```"\n"``` (where the line ends and goes onto a new one) loops through it and counts how many times it finds a whitespace and a new line in the result. 
