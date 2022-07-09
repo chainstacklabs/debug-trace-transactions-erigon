@@ -156,6 +156,9 @@ After the node instance is created, we update the label that keeps track of the 
 // update info label
 document.getElementById("info").innerHTML = "Tracing..."
 ```
+
+#### Call ```trace_transaction``` and measure the execution time
+
 The next session is the part where we call the ```trace_transaction``` method and measure how long it takes to be complete. 
 
 ```js
@@ -163,8 +166,71 @@ The next session is the part where we call the ```trace_transaction``` method an
 const start = Date.now();
 const traceResult = await callTrace(txHash, provider);
 const end = Date.now();
-document.getElementById("SpeedEri").innerHTML = `${end - start} ms`
+
+// Display the result in the page
+document.getElementById("SpeedEri").innerHTML = `${end - start} ms`;
 ```
 
-The ```Date.now()``` function returns a number resenting the milliseconds elapsed since the UNIX epoch, and this is used to measure how long it takes to execute the ```callTrace()``` function by taking a snapshot just before and immediately after the ```callTrace()``` is called and making the difference. Giving a result of how many milliseconds the excecution took.
+The ```Date.now()``` function returns a number resenting the milliseconds elapsed since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time), and this is used to measure how long it takes to execute the ```callTrace()``` function by taking a snapshot just before and immediately after the ```callTrace()``` is called and making the difference. Giving a result of how many milliseconds the excecution took.
 
+You will notice that the call to the ```trace_transaction``` method is done through a function, the ```callTrace(txHash, provider)``` in this case:
+
+- We pass the transaction hash and the provider to the function.
+
+```js
+// call the trace_transaction method
+async function callTrace(hash, provider) {
+    try {
+
+        // call trace_transaction using the transaction hash from the user (Erigon node only)
+        const traceTx = await provider.send("trace_transaction", [hash, ]);
+
+        return traceTx
+        
+    } catch (err) {
+        console.log(err)
+        alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
+    }
+}
+```
+
+This is an ```async``` function and that means that we can use the ```await``` keyword on it allowing us to wait for it to be done before continuing. 
+
+This line:
+
+```js
+const traceTx = await provider.send("trace_transaction", [hash, ]);
+``` 
+is the command that makes the call to the node, and you can see that we use the ```provider``` and the ```hash``` that we took from the input elements and passed to the function. 
+
+> **Note** I decided to implement it like this because this way, we can measure only the time that takes for the request to be executed without other processes happening before. Also, keep in mind that these numbers are approximations.
+
+The RPC call itself is enclosed in a ```try/catch``` pattern; so that if something went wrong, the user receives an alert with some possible causes, and the error returned is logged in the console.
+
+#### Measure the size in kB/MB of the data restrieved from the blockchain
+
+This section of the function makes a calculation of the size of the response:
+
+```js
+// calculate the aproximate size of the object, trace is usually small and getSizeKb returns a value in kB
+const size = getSizeKb(traceResult)
+//const megaBytes = size / 1024;
+
+document.getElementById("dataEri").innerHTML = `${size} kB`
+```
+
+To do it I created the ```getSizeKb()``` function, that takes the response of the call to the node as a parameter. 
+
+```js
+// return the approximate sie of the stringified JSON object 
+function getSizeKb(object) {
+    const parsed = JSON.stringify(object, null,)
+    const bytes = new TextEncoder().encode(parsed).length
+    const kb = (bytes / 1024).toFixed(2);
+    return kb
+}
+```
+
+We first transform the response into a string with 0 added spaces to maintain the estimate as accurate as possible. Then, call the ```.lenght``` method on the ```TextEncoder()``` function of the parsed response to receiving an approximate size in bytes. At this point, we just need some math to convert it into kB and MB.
+
+You will see this pattern often throughout the code.
