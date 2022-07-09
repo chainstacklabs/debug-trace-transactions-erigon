@@ -6,6 +6,23 @@ This app allows you to test the ```debug``` and ```trace``` modules offered by t
 
 > **Note** You can ```debug``` with a node running <b>Erigon</b>, or a node running <b>Geth</b> with the [```debug``` module enabled](https://geth.ethereum.org/docs/rpc/ns-debug).   
 
+## Table of contents
+
+* [TL;DR](#tl-dr)
+* [How to serve the page](#how-to-serve-the-page)
+* [RPC endpoint requirements](#rpc-endpoint-requirements)
+* [Trace transactions using Erigon](#trace-transactions-using-erigon)
+* [Debug transactions using Erigon and Geth](#debug-transactions-using-erigon-and-geth)
+* [Compare Erigon and Geth](#compare-erigon-and-geth)
+* [Time to explain the code](#time-to-explain-the-code)
++ [Ethers library | ```ethers.js```](#ethers-library-ethersjs-)
++ [```script.js```](#-scriptjs-)
++ [Trace button and ```trace()``` function](#trace-button-and-trace-function)
+  - [Call ```trace_transaction``` and measure the execution time](#call-trace-transaction-and-measure-the-execution-time)
+  - [Display the response in the page](#display-the-response-in-the-page)
+  - [Measure the size in kB/MB of the data restrieved from the blockchain](#measure-the-size-in-kb-mb-of-the-data-restrieved-from-the-blockchain)
+  - [Calculate the numbers of lines retrieved in the parsed object](#calculate-the-numbers-of-lines-retrieved-in-the-parsed-object)
+
 ## TL;DR
 
 1. [Clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
