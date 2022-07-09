@@ -1,5 +1,4 @@
-
-// call the trace_transaction method using the Erigon node and hash from the input
+// call the trace_transaction method using the node and hash from the input
 async function trace() {
 
     //retrieve the users inputs 
@@ -32,7 +31,7 @@ async function trace() {
     document.getElementById("info").innerHTML = "Done retrieving"
 
     // calculate the aproximate size of the object, trace is usually small and getSizeKb returns a value in kB
-    const size = getSizeKb(jsonResponse)
+    const size = getSizeKb(traceResult)
     //const megaBytes = size / 1024;
     document.getElementById("dataEri").innerHTML = `${size} kB`
 
@@ -71,9 +70,9 @@ async function debugErigon() {
     document.getElementById("info").innerHTML = "Done retrieving"
 
     // calculate the aproximate size of the object, trace is usually small and getSizeKb returns a value in kB
-    const size = getSizeKb(jsonResponse)
+    const size = getSizeKb(debugResult)
     const megaBytes = size / 1024;
-    document.getElementById("dataEri").innerHTML = `${megaBytes.toFixed(2)} mB`
+    document.getElementById("dataEri").innerHTML = `${megaBytes.toFixed(2)} MB`
 
     // call getLines to count how many lines are present in the JSON
     const lines = getLines(debugResult)
@@ -110,9 +109,9 @@ async function debugGeth() {
     document.getElementById("result").innerHTML = jsonResponse
 
     // calculate the aproximate size of the object, getSizeKb returns a value in kB
-    const size = getSizeKb(jsonResponse)
+    const size = getSizeKb(debugResult)
     const megaBytes = size / 1024;
-    document.getElementById("dataGeth").innerHTML = `${megaBytes.toFixed(2)} mB`
+    document.getElementById("dataGeth").innerHTML = `${megaBytes.toFixed(2)} MB`
 
     // call getLines to count how many lines are present in the JSON
     const lines = getLines(debugResult)
@@ -131,7 +130,7 @@ async function callTrace(hash, provider) {
         return traceTx
 
     } catch (err) {
-        console.error("Something went wrong")
+        console.log(err)
         alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
     }
 }
@@ -148,7 +147,7 @@ async function callDebugErigon(hash, provider) {
         return debugTx
 
     } catch (err) {
-        console.error("Something went wrong")
+        console.log(err)
         alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
     }
 }
@@ -165,7 +164,7 @@ async function callDebugGeth(hash, provider) {
         return debugTx
 
     } catch (err) {
-        console.error("Something went wrong")
+        console.log(err)
         alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
     }
 }
@@ -197,16 +196,14 @@ async function compareNodes() {
     console.log("Done Geth")
 
     // calculate the approximate size of the responses 
-    const jsonResponseEri = JSON.stringify(traceResult, null, 4)
-    const jsonResponseGeth = JSON.stringify(debugResult, null, 4)
 
-    const sizeEri = getSizeKb(jsonResponseEri)
+    const sizeEri = getSizeKb(traceResult)
     const megaBytesEri = sizeEri / 1024;
-    document.getElementById("dataEri").innerHTML = `${megaBytesEri.toFixed(2)} mB`
+    document.getElementById("dataEri").innerHTML = `${megaBytesEri.toFixed(2)} MB`
 
-    const sizeGeth = getSizeKb(jsonResponseGeth)
+    const sizeGeth = getSizeKb(debugResult)
     const megaBytesGeth = sizeGeth / 1024;
-    document.getElementById("dataGeth").innerHTML = `${megaBytesGeth.toFixed(2)} mB`
+    document.getElementById("dataGeth").innerHTML = `${megaBytesGeth.toFixed(2)} MB`
 
     // call getLines to count how many lines are present in the JSON
     const linesEri = getLines(traceResult)
@@ -219,24 +216,25 @@ async function compareNodes() {
     console.log("Done comparing")
 }
 
-// return the approximate size of the stringified JSON object 
+// return the approximate sie of the stringified JSON object 
 function getSizeKb(object) {
-    const bytes = new TextEncoder().encode(object).length
+    const parsed = JSON.stringify(object, null, )
+    const bytes = new TextEncoder().encode(parsed).length
     const kb = (bytes / 1024).toFixed(2);
     return kb
 }
 
 // count the lines retrieved 
 function getLines(object) {
-    
+
     const parsed = JSON.stringify(object, null, 4)
     const lines = parsed.split("\n")
 
     let length = 0;
-    for(let i = 0; i < lines.length; ++i)
-    length++;
+    for (let i = 0; i < lines.length; ++i)
+        length++;
 
-    console.log("lines:"+length)
+    console.log("lines:" + length)
 
     return length
 }
