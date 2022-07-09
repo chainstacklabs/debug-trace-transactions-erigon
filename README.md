@@ -258,3 +258,20 @@ document.getElementById("linesEri").innerHTML = lines
 ```
 
 The ```getLines()``` function simply splits the parsed object by whitespaces ```"\n"``` (where the line ends and goes onto a new one) loops through it and counts how many times it finds a whitespace and a new line in the result. 
+
+```js
+// count the lines retrieved 
+function getLines(object) {
+    
+    const parsed = JSON.stringify(object, null, 4)
+    const lines = parsed.split("\n")
+
+    let length = 0;
+    for(let i = 0; i < lines.length; ++i)
+    length++;
+
+    console.log("lines:"+length)
+
+    return length
+}
+```
