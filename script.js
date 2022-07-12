@@ -141,7 +141,7 @@ async function callDebugErigon(hash, provider) {
     // try/catch for error handling
     try {
 
-        // call trace_transaction using the transaction hash from the user (Erigon node only)
+        // call debug_traceTransaction using the transaction hash from the user 
         const debugTx = await provider.send("debug_traceTransaction", [hash, ]);
 
         return debugTx
@@ -158,7 +158,7 @@ async function callDebugGeth(hash, provider) {
     // try/catch for error handling
     try {
 
-        // call trace_transaction using the transaction hash from the user (Erigon node only)
+        // call debug_traceTransaction using the transaction hash from the user 
         const debugTx = await provider.send("debug_traceTransaction", [hash, ]);
 
         return debugTx
@@ -177,7 +177,7 @@ async function compareNodes() {
     const geth_url = document.getElementById("geth").value;
     const txHash = document.getElementById("hash").value;
 
-    // connects to both nodes
+    // Create nodes instances 
     const eriProvider = new ethers.providers.JsonRpcProvider(eri_url);
     const gethProvider = new ethers.providers.JsonRpcProvider(geth_url);
     console.log("Comparing...")
