@@ -4,26 +4,30 @@ This app allows you to test the ```debug``` and ```trace``` modules offered by t
 
 > **Note** You need to query a node running <b>Erigon</b> to be able to ```trace``` a transaction.
 
-> **Note** You can ```debug``` with a node running <b>Erigon</b>, or a node running <b>Geth</b> with the [```debug``` module enabled](https://geth.ethereum.org/docs/rpc/ns-debug).   
+> **Note** You can ```debug``` with a node running <b>Erigon</b>, or a node running <b>Geth</b> with the [```debug``` module enabled](https://geth.ethereum.org/docs/rpc/ns-debug).
 
 ## Table of contents
 
-* [TL;DR](#tl-dr)
-* [How to serve the page](#how-to-serve-the-page)
-* [RPC endpoint requirements](#rpc-endpoint-requirements)
-* [Trace transactions using Erigon](#trace-transactions-using-erigon)
-* [Debug transactions using Erigon and Geth](#debug-transactions-using-erigon-and-geth)
-* [Compare Erigon and Geth](#compare-erigon-and-geth)
-* [Time to explain the code](#time-to-explain-the-code)
-+ [Ethers library | ```ethers.js```](#ethers-library-ethersjs-)
-+ [```script.js```](#-scriptjs-)
-+ [Trace button and ```trace()``` function](#trace-button-and-trace-function)
-  - [Call ```trace_transaction``` and measure the execution time](#call-trace-transaction-and-measure-the-execution-time)
-  - [Display the response in the page](#display-the-response-in-the-page)
-  - [Measure the size in kB/MB of the data restrieved from the blockchain](#measure-the-size-in-kb-mb-of-the-data-restrieved-from-the-blockchain)
-  - [Calculate the numbers of lines retrieved in the parsed object](#calculate-the-numbers-of-lines-retrieved-in-the-parsed-object)
+  * [TLDR](#tldr)
+  * [How to serve the page](#how-to-serve-the-page)
+  * [RPC endpoint requirements](#rpc-endpoint-requirements)
+  * [Trace transactions using Erigon](#trace-transactions-using-erigon)
+  * [Debug transactions using Erigon and Geth](#debug-transactions-using-erigon-and-geth)
+  * [Compare Erigon and Geth](#compare-erigon-and-geth)
+  * [Time to explain the code](#time-to-explain-the-code)
+    + [Ethers library ethers.js](#ethers-library-ethersjs)
+    + [script.js](#scriptjs)
+    + [Trace button and trace function](#trace-button-and-trace-function)
+      - [Call trace transaction and measure the execution time](#call-trace-transaction-and-measure-the-execution-time)
+      - [Display the response in the page](#display-the-response-in-the-page)
+      - [Measure the size in kB or MB of the data restrieved from the blockchain](#measure-the-size-in-kb-or-mb-of-the-data-restrieved-from-the-blockchain)
+      - [Calculate the numbers of lines retrieved in the parsed object](#calculate-the-numbers-of-lines-retrieved-in-the-parsed-object)
+    + [Debug buttons, callDebugErigon and callDebugGeth functions](#debug-buttons-calldebugerigon-and-calldebuggeth-functions)
+    + [Compare button and the compareNodes function](#compare-button-and-the-comparenodes-function)
+    + [Clear and Clear stats buttons](#clear-and-clear-stats-buttons)
+  * [Conclusion](#conclusion)
 
-## TL;DR
+## TLDR
 
 1. [Clone this repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 1. [Serve the page](#how-to-serve-the-page).
@@ -87,15 +91,13 @@ You will notice that a ```debug_traceTransaction``` call made to a node running 
 
 > **Note** The statistics calculated by the app are an estimation, and the speed result will be affected by the user location compared to the node.
 
-![screely-1657220353355](https://user-images.githubusercontent.com/99700157/177854569-2526d39f-3a14-4ce0-b862-c332ac2eb2c9.png)
-
 The ```trace_transaction``` method is only available using Erigon, so it won't be possible to compare to Geth, so this app compares the two clients on the ```debug_traceTransaction``` method. 
 
 In short, Erigon retrieves more data, and it takes a bit longer to do it compared to Geth.
 
 ## Time to explain the code
 
-### Ethers library | ```ethers.js```
+### Ethers library ethers.js
 
 This app uses the [Ethers library](https://docs.ethers.io/v5/) to interact with the nodes and make the requests. The nice part is that there is no need to install any dependencies as the [Etheres docs](https://docs.ethers.io/v5/getting-started/#getting-started--importing--web-browser) explain how to import the library into the browser directly.
 
@@ -109,7 +111,7 @@ In this case, we import it into the ```index.html``` file with this line:
 
 > Make sure to take a look at the [Etheres docs](https://docs.ethers.io/v5/getting-started/#getting-started--importing--web-browser) to keep the library up to date.
 
-### ```script.js``` 
+### script.js
 
 The bulk of the functionality is in the ```script.js``` file, where you can find the functions that power the buttons on the webpage. 
 
@@ -131,7 +133,7 @@ The code in the ```script.js``` file is heavily commented, perhaps more than you
 
 Now, we'll break down the function called when you press the ```trace``` button. Note that the principle applies to the other buttons as well.
 
-### Trace button and ```trace()``` function
+### Trace button and trace function
 
 This is the HTML code for the button itself in the ```index.html``` file:
 
@@ -174,7 +176,7 @@ After the node instance is created, we update the label that keeps track of the 
 document.getElementById("info").innerHTML = "Tracing..."
 ```
 
-#### Call ```trace_transaction``` and measure the execution time
+#### Call trace transaction and measure the execution time
 
 The next session is the part where we call the ```trace_transaction``` method and measure how long it takes to be complete. 
 
@@ -236,7 +238,7 @@ document.getElementById("result").innerHTML = jsonResponse
 
 To do this we use the ```JSON.stringify()``` function adding four extra indent spaces to make it easier to read, then display it in the HTML page.
 
-#### Measure the size in kB/MB of the data restrieved from the blockchain
+#### Measure the size in kB or MB of the data restrieved from the blockchain
 
 This section of the function makes a calculation of the size of the response:
 
@@ -292,3 +294,133 @@ function getLines(object) {
     return length
 }
 ```
+
+### Debug buttons, callDebugErigon and callDebugGeth functions
+
+At this point, we analyzed every step happening once you push the ```Trace``` button. Almost the same code is run when you push the ```Debug Erigon``` or ```Debug Geth``` buttons. 
+
+```html
+<button onclick="debugErigon()">Debug Erigon &#128030</button><br>
+
+<button onclick="debugGeth()">Debug Geth &#128030</button><br>
+```
+
+Clicking one of these buttons will respectively call either the ```debugErigon()``` or ```debugGeth()``` functions, which work the same way as the ```trace()``` functions. 
+
+The only difference is that those will call the ```debug_traceTransaction``` method instead, by calling the ```callDebugErigon()``` or ```callDebugGeth()``` functions respectively. 
+
+This is because we can choose if we want to debug the transaction using a node running Erigon or a node running Geth, which will return slightly different results.
+
+You will notice that the syntax is the same as the node URL is passed when you click on the button. It only changes the RPC method called.
+
+```js
+// call the debug_traceTransaction method using Erigon
+async function callDebugErigon(hash, provider) {
+
+    // try/catch for error handling
+    try {
+
+        // call debug_traceTransaction using the transaction hash from the user 
+        const debugTx = await provider.send("debug_traceTransaction", [hash, ]);
+
+        return debugTx
+
+    } catch (err) {
+        console.log(err)
+        alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
+    }
+}
+
+// call the debug_traceTransaction method using Geth
+async function callDebugGeth(hash, provider) {
+
+    // try/catch for error handling
+    try {
+
+        // call debug_traceTransaction using the transaction hash from the user 
+        const debugTx = await provider.send("debug_traceTransaction", [hash, ]);
+
+        return debugTx
+
+    } catch (err) {
+        console.log(err)
+        alert("Something went wrong - possible reasons: Not an Erigon node, Trace module not active on your node, Transaction hash not valid.")
+    }
+}
+```
+
+### Compare button and the compareNodes function
+
+A big reason for creating this app and doing this research is to compare the two clients and the debug method. The ```compareNodes()``` function will run basically the same code to retrieve data, measure the execution time, and measure the size, but it will run it on both nodes and will only display the analytics without showing the data retrieved as the other buttons do. 
+
+### Clear and Clear stats buttons
+
+The last two functions use a very simple logic to clear the screen from previous results and data. 
+
+The  Clear button calls the ```clean()``` function, which clears up the last section of the page, where the result of the retrieved data is displayed. 
+
+```html
+<button onclick="clean()">Clear &#128165</button>
+```
+
+> Note that I could not name the function ```clear()``` as it's a keyword, and it would not work. 
+
+The ```clean()``` function simply uses the ```innerHTML``` method to pass an empty value and clear the section of the page.
+
+```js
+// clear the screen from the previous result
+function clean() {
+    let div = document.getElementById('result');
+    let info = document.getElementById('info');
+    div.innerHTML = "";
+    info.innerHTML = "";
+}
+```
+
+The same principle applies to the ```cleanStats()``` function called by the Clear stats button. 
+
+```js
+// clear the screen from the data stats
+function cleanStats() {
+    let timeEri = document.getElementById("SpeedEri")
+    let timeGeth = document.getElementById("SpeedGeth")
+    let sizeEri = document.getElementById("dataEri")
+    let sizeGeth = document.getElementById("dataGeth")
+    let linesEri = document.getElementById("linesEri")
+    let linesGeth = document.getElementById("linesGeth")
+    timeEri.innerHTML = "";
+    timeGeth.innerHTML = "";
+    sizeEri.innerHTML = "";
+    sizeGeth.innerHTML = "";
+    linesEri.innerHTML = "";
+    linesGeth.innerHTML = "";
+}
+```
+
+```cleanStats()``` will clear the stats section of the page.
+
+## Conclusion
+
+You can use this app to trace or debug a transaction if you have access to a node running the Erigon client or only debug if you have access to a node running the Geth client.
+
+If you compare the two clients on the same transaction, you will notice that Erigon will take more time to complete the execution compared to Geth, but it will also retrieve more data, in both size and information.
+
+This picture shows an example of a comparison:
+
+> **Note** keep in mind that the speed times will vary depending on your location (compared to the node) and internet connection. In this case, the nodes I am using are deployed on the other side of the world compared to my location!
+
+![screely-1657656681419](https://user-images.githubusercontent.com/99700157/178586679-322f7ebd-8ff8-481f-ad13-43738a2570b9.png)
+
+You can see how Erigon takes more time but also retrieve more data. This is because Erigon also retrieves the memory stack.
+
+Example of Erigon response using ```debug_traceTransaction```:
+
+![screely-1657656739427](https://user-images.githubusercontent.com/99700157/178586930-5ca95e92-580b-4705-a197-3ed2e5ea06e3.png)
+
+Example of Geth response using ```debug_traceTransaction```:
+
+![screely-1657656700154](https://user-images.githubusercontent.com/99700157/178586999-9bd5d967-2608-437a-978e-7e29b02a1efa.png)
+ 
+You can read the article linked to this app to get a deeper understanding of these two clients. 
+
+
