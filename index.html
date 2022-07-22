@@ -1,114 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="./style.css" />
-    <title>Debug & trace transactions</title>
-
-</head>
-
-<body>
-    <div class="parent">
-        <div class="div1">
-            <h1 class="center">Test the debug and trace modules in Erigon</h1>
-            <h2 class="center">This app allows to call the <code>trace_transaction</code>, or <code>debug_traceTransaction</code> method</h2>
-            <h2 class="center">trace_transaction</h2>
-            <p><b>trace_transaction</b> is one of the methods available in Erigon to <strong>trace</strong>, and it takes a transaction hash as input, allowing you to see the internal functions calls made into a smart contract.
-            <p>
-            <p>Check this <a href="https://gist.github.com/soos3d/285a5483d22970c7bdffb0db3474f71f" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
-
-            <h2 class="center">debug_traceTransaction</h2>
-            <p>The debug function in Erigon is very useful during the development of a smart contract to understand why a transaction is failing.</p>
-
-            <p><b>debug_traceTransaction</b> takes a transaction hash as input and returns logs of low-level opcode that can be used to show what happens step by step during the process and what is the reason for it failing.
-            <p>
-            <p>Check this <a href="https://gist.github.com/soos3d/712aa25240c968e6a22514a9b67443ee" target="_blank">GitHub Gist</a> to have a detailed explanation and a transaction analysis example.</p>
-        </div>
-
-        <div class="div2">
-            <h2>Instructions</h2>
-            <ol>
-                <li>Have access to an Erigon and Geth node endpoints</li>
-                <ul>You can deploy one with Chainstack!</ul>
-                <ul><a href="https://console.chainstack.com/user/account/create" target="_blank">Sign up on Chainstack.</a></ul>
-                <ul><a href="https://docs.chainstack.com/platform/join-a-public-network" target="_blank">Deploy a node.</a></ul>
-                <li>Insert the enpoints URL in the node input fields.</li>
-                <li>Paste a transaction hash in the transaction field.</li>
-                <li>Choose if you want to trace or debug the transaction.</li>
-                <li>Click "Compare" if you only want to see the statistics (This will not display the response).</li>
-                <ul>Note that <b>trace</b> only works with Erigon.</ul>
-                <ul>The analysis section with display the time needed to retrieve the data, as well as the size.</ul>
-                <ul>The last section will display the JSON response.</ul>
-            </ol>
-
-        </div>
-
-        <div class="div3">
-            <h2 class="center">Input nodes and transaction hash</h2>
-            <label>Input your Erigon node URL</label>
-            <input type="text" id="erigon"><br>
-
-            <label>Input your Geth node URL</label>
-            <input type="text" id="geth"><br>
-
-            <label>Input the transaction hash to analyze</label>
-            <input type="text" id="hash"><br>
-        </div>
-
-        <div class="div4">
-            <h2 class="center">Test debug and trace</h2>
-            <label>Trace is only available with Erigon</label><br>
-            <button onclick="trace()">Trace &#128373</button><br>
-            <button onclick="debugErigon()">Debug Erigon &#128030</button><br>
-
-            <label>The transaction must to be within the past 128 blocks if you are using a full node running Geth</label><br>
-
-            <button onclick="debugGeth()">Debug Geth &#128030</button><br>
-        </div>
-
-        <div class="div5">
-            <h2>Analysis</h2>
-            <h3>Compare Erigon and Geth calling the <b>debug_traceTransaction</b> method</h3>
-
-            <button onclick="compareNodes()">Compare &#128064</button>
-            <button onclick="cleanStats()">Clear stats &#128165</button>
-
-            <h3>Speed</h3>
-            <label>Erigon retrieving speed</label>
-            <label id="SpeedEri" class="speedRes"></label>
-            <label>Geth retrieving speed</label>
-            <label id="SpeedGeth" class="speedRes"></label>
-
-            <h3>Data</h3>
-            <label>Erigon data retrived</label>
-            <label id="dataEri" class="speedRes"></label>
-            <label>Geth data retrieved</label>
-            <label id="dataGeth" class="speedRes"></label>
-
-            <h3>Lines retrieved</h3>
-            <label>Erigon lines retrived</label>
-            <label id="linesEri" class="speedRes"></label>
-            <label>Geth lines retrieved</label>
-            <label id="linesGeth" class="speedRes"></label>
-
-        </div>
-
-        <div class="div6">
-            <h2>Data retrived</h2>
-            <button onclick="clean()">Clear &#128165</button>
-            <label id="info" class="infoTab"></label>
-            <pre id="result" style="width:900px;overflow:auto"></pre>
-        </div>
-    </div>
-
-    </div>
-
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
-    <script src="script.js"></script>
-
-</body>
-
-</html>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>
+         Debug and Trace playground
+      </title>
+      <meta name="description" content="Debug and trace playground to compare the two modules on nodes running the Erigon and Geth clients" />
+      <meta name="keywords" content="web3, ethereum, evm, client, erigon, go ethereum, debug, trace, transaction, geth" />
+      <meta name="author" content="" />
+      <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css'>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <header>
+         <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+               <a href="https://chainstack.com" class="flex items-center mb-4 mt-4">
+               <img src="https://chainstack.com/wp-content/uploads/2019/03/Logo-Blue@3x-Padded.png" class="mr-3 h-6 sm:h-9" alt="Chainstack-logo" />
+               </a>
+               <div class="flex items-center lg:order-2">
+                  <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
+                     <span class="sr-only">Open main menu</span>
+                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                     </svg>
+                     <svg class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                     </svg>
+                  </button>
+               </div>
+               <div class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
+                  <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                     <li>
+                        <a href="https://github.com/soos3d/debug-trace-transactions-Erigon-webapp" target="_blank" class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Find on GitHub <i class="fa fa-github" style="font-size:20px"></i></a>
+                     </li>
+                     <li>
+                        <a href="#" target="_blank" class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">Read the full article <i class="fa fa-newspaper-o" style="font-size:20px" aria-hidden="true"></i></a>
+                     </li>
+                     <li>
+                        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-size="large" data-text="Explore Debug and Trace on Erigon and Geth!" data-hashtags="web3, ethereum, debug, trace, chainstack evm" data-related="chainstackhq" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </nav>
+      </header>
+   <body class="bg-blue-600">
+      <div class="p-4 w-full text-center bg-white  border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+         <h5 class="mt-4 mb-6 text-5xl font-bold text-gray-900 dark:text-white">Debug and Trace playground</h5>
+         <h6 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">Compare the Erigon and Geth clients</h6>
+         <p class="mb-5 text-base text-gray-500 sm:text-lg dark:text-gray-400">This app allows to call the trace_transaction, or debug_traceTransaction method.</p>
+      </div>
+      <div class="space-y-5"><br></div>
+      <div class="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-10">
+         <!--Card 1-->
+         <div class="rounded overflow-hidden shadow-lg bg-white">
+            <div class="px-6 py-4">
+               <div class="font-bold text-2xl mb-2">trace_transaction</div>
+               <p class="text-gray-700 text-base">
+                  trace_transaction is one of the methods available in Erigon to trace, and it takes a transaction hash as input, allowing you to see the internal functions calls made into a smart contract.
+               </p>
+               <div class="flex justify-center">
+                  <p class="mt-3 text-gray-700 text-base">
+                     This <b>GitHub Gist</b> has a detailed explanation and a transaction analysis example.
+                  </p>
+               </div>
+               <div class="flex justify-center">
+                  <a href="https://gist.github.com/soos3d/285a5483d22970c7bdffb0db3474f71f" target="_blank" class=" mt-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">trace_transaction guide <i class="fa fa-github" style="font-size:15px"></i></a>
+               </div>
+            </div>
+            <div class="px-6 pt-4 pb-2">
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#web3</span>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#Erigon</span>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#Geth</span>
+            </div>
+         </div>
+         <!--Card 2-->
+         <div class="rounded overflow-hidden shadow-lg bg-white">
+            <div class="px-6 py-4">
+               <div class="font-bold text-2xl mb-2">debug_traceTransaction</div>
+               <p class="text-gray-700 text-base">
+                  The debug function in Erigon is very useful during the development of a smart contract to understand why a transaction is failing.
+               </p>
+               <p class="mt-3 text-gray-700 text-base">
+                  debug_traceTransaction takes a transaction hash as input and returns logs of low-level opcode that can be used to show what happens step by step during the process and what is the reason for it failing.
+               </p>
+               <div class="flex justify-center">
+                  <p class="mt-3 text-gray-700 text-base">
+                     This <b>GitHub Gist</b> has a detailed explanation and a transaction analysis example.
+                  </p>
+               </div>
+               <div class="flex justify-center">
+                <a href="https://gist.github.com/soos3d/712aa25240c968e6a22514a9b67443ee" target="_blank" class=" mt-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">debug_traceTransaction guide <i class="fa fa-github" style="font-size:15px"></i></a>
+               </div>
+            </div>
+            <div class="px-6 pt-4 pb-2">
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#web3</span>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#Erigon</span>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#Geth</span>
+            </div>
+         </div>
+      </div>
+      </div>
+      <div class="p-4 w-full bg-white flex justify-center">
+         <div class="font-bold text-3xl mb-2">Instructions</div>
+      </div>
+      <div class="p-4 w-full bg-white flex justify-center">
+         <ol class="list-decimal">
+            <li class="mb-2">Have access to an Erigon and Geth node endpoints</li>
+            <ul class="mb-2">You can deploy one with Chainstack!</ul>
+            <ul class="text-blue-500 mb-2"><a href="https://console.chainstack.com/user/account/create" target="_blank">Sign up on Chainstack.</a></ul>
+            <ul class="text-blue-500 mb-2"><a href="https://docs.chainstack.com/platform/join-a-public-network" target="_blank">Deploy a node.</a></ul>
+            <li class="mb-2">Insert the enpoints URL in the node input fields.</li>
+            <li class="mb-2">Paste a transaction hash in the transaction field.</li>
+            <li class="mb-2">Choose if you want to trace or debug the transaction.</li>
+            <li class="mb-2">Click "Compare" if you only want to see the statistics (This will not display the response).</li>
+            <ul class="mb-2"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Note that <b>trace</b> only works with Erigon.</ul>
+            <ul class="mb-2"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The analysis section with display the time needed to retrieve the data, as well as the size.</ul>
+            <ul class="mb-2"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The last section will display the JSON response.</ul>
+         </ol>
+      </div>
+      <div class="space-y-5"><br></div>
+      <div class="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-10">
+         <!--Card 1-->
+         <div class="rounded overflow-hidden shadow-lg bg-white flex justify-center">
+            <div class="px-6 py-4">
+               <div class="font-bold text-2xl mb-4 flex justify-center">Input node URL and transaction hash</div>
+               <span class="text-xs font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase">
+               Input your Erigon node URL
+               </span>
+               <div class="mb-3 pt-0">
+                  <input id="erigon" type="text" placeholder="Erigon URL" class="px-3 py-3 placeholder-slate-300 text-slate-600 relative bg-white bg-white rounded text-sm border border-slate-300 outline-none focus:outline-none focus:ring w-full"/>
+               </div>
+               <span class="text-xs font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase">
+               Input your Geth node URL
+               </span>
+               <div class="mb-3 pt-0">
+                  <input id="geth" type="text" placeholder="Geth URL" class="px-3 py-3 placeholder-slate-300 text-slate-600 relative bg-white bg-white rounded text-sm border border-slate-300 outline-none focus:outline-none focus:ring w-full"/>
+               </div>
+               <span class="text-xs font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase">
+               Input the transaction hash to analyze
+               </span>
+               <div class="mb-3 pt-0">
+                  <input id="hash" type="text" placeholder="Transaction hash" class="px-3 py-3 placeholder-slate-300 text-slate-600 relative bg-white bg-white rounded text-sm border border-slate-300 outline-none focus:outline-none focus:ring w-full"/>
+               </div>
+               <div class="flex justify-center">
+                  <p class="mt-3 text-gray-700 text-base text-sm">
+                     Use <a href="https://etherscan.io/" class="text-blue-500">Etherscan</a> to find a transaction to trace or debug using Erigon or Geth.
+                  </p>
+               </div>
+            </div>
+         </div>
+         <!--Card 2-->
+         <div class="rounded overflow-hidden shadow-lg bg-white ">
+            <div class="px-6 py-4 ">
+               <div class="font-bold text-2xl mb-2 flex justify-center">Test debug and trace</div>
+               <div class="flex justify-center">
+                  <span class="text-xs font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase mt-2">
+                  Trace is only available with an Erigon client.
+                  </span>
+               </div>
+               <div class="flex justify-center mt-2">
+                  <button onclick="trace()" type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Trace &#128373</button>
+               </div>
+               <div class="flex justify-center mt-4">
+                  <button onclick="debugErigon()" type="button" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Debug Erigon &#128030</button>
+               </div>
+               <div class="flex justify-center">
+                  <span class="text-xs font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase mt-6">
+                  The transaction must to be within the past 128 blocks if you are using a full node running Geth.
+                  </span>
+               </div>
+               <div class="flex justify-center mt-2">
+                  <button onclick="debugGeth()" type="button" class="text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:focus:ring-yellow-900">Debug Geth &#128030</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="p-4 w-full text-center bg-white  border shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700">
+         <h5 class="mt-4 mb-6 text-5xl font-bold text-gray-900 dark:text-white">Analysis | Comparison stats</h5>
+         <h6 class="mt-6 mb-10 text-2xl font-bold text-gray-900 dark:text-white">Compare Erigon and Geth calling the debug_traceTransaction method</h6>
+         <div class="flex justify-center mt-2">
+            <button onclick="compareNodes()" type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Compare &#128064</button>
+            <button onclick="cleanStats()" type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Clear stats &#128165</button>
+         </div>
+         <div class="font-bold text-2xl mb-2 flex justify-center mt-8">Execution speed</div>
+         <div class="flex justify-center">
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-400 uppercase mt-6">
+            Erigon retrieving speed
+            </span>
+            <span  id="SpeedEri" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-yellow-400 uppercase mt-6 ml-10">
+            Geth retrieving speed
+            </span>
+            <span  id="SpeedGeth" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+         </div>
+         <div class="font-bold text-2xl mb-2 flex justify-center mt-8">Amount of data retrieved</div>
+         <div class="flex justify-center">
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-500 uppercase mt-6">
+            Erigon data retrived
+            </span>
+            <span  id="dataEri" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-yellow-500 uppercase mt-6 ml-10">
+            Geth data retrived
+            </span>
+            <span  id="dataGeth" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+         </div>
+         <div class="font-bold text-2xl mb-2 flex justify-center mt-8">Number of lines in the JSON file</div>
+         <div class="flex justify-center">
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-blue-600 uppercase mt-6">
+            Erigon lines retrived
+            </span>
+            <span  id="linesEri" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+            <span class="text-xl font-semibold inline-block mt-2 mb-2 py-1 px-2 uppercase rounded text-white bg-yellow-600 uppercase mt-6 ml-10">
+            Geth lines retrived
+            </span>
+            <span  id="linesGeth" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white border-4 uppercase mt-6">
+            </span>
+         </div>
+      </div>
+      <div><br></div>
+      <div class="p-4 w-full text-center bg-white ">
+         <h5 class="mt-4 mb-6 text-5xl font-bold text-gray-900 dark:text-white">Result data retrieved</h5>
+         <div class="flex justify-center mt-2">
+            <button onclick="clean()"  type="button" class="text-white bg-blue-500 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Clear &#128165</button>
+         </div>
+         <div class="flex justify-center mt-2">
+            <span id="info" class=" ml-5  text-xl font-semibold inline-block mt-2 mb-2 py-1 px-12 uppercase rounded bg-white uppercase mt-6">
+            </span>
+         </div>
+         <div class="text-left w-8/12 flex justify-center">
+            <pre id="result" style="overflow:auto"></pre>
+         </div>
+      </div>
+      </div>
+      <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+      <script src="script.js"></script>
+   </body>
