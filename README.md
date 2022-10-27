@@ -403,24 +403,7 @@ function cleanStats() {
 
 You can use this app to trace or debug a transaction if you have access to a node running the Erigon client or only debug if you have access to a node running the Geth client.
 
-If you compare the two clients on the same transaction, you will notice that Erigon will take more time to complete the execution compared to Geth, but it will also retrieve more data, in both size and information.
-
-This picture shows an example of a comparison:
-
-> **Note** keep in mind that the speed times will vary depending on your location (compared to the node) and internet connection. In this case, the nodes I am using are deployed on the other side of the world compared to my location!
-
-![screely-1657656681419](https://user-images.githubusercontent.com/99700157/178586679-322f7ebd-8ff8-481f-ad13-43738a2570b9.png)
-
-You can see how Erigon takes more time but also retrieve more data. This is because Erigon also retrieves the memory stack.
-
-Example of Erigon response using ```debug_traceTransaction```:
-
-![screely-1657656739427](https://user-images.githubusercontent.com/99700157/178586930-5ca95e92-580b-4705-a197-3ed2e5ea06e3.png)
-
-Example of Geth response using ```debug_traceTransaction```:
-
-![screely-1657656700154](https://user-images.githubusercontent.com/99700157/178586999-9bd5d967-2608-437a-978e-7e29b02a1efa.png)
+If you compare the two clients on the same transaction, you will notice that Erigon will take more time to complete the execution than Geth, but it will also retrieve more data, in both size and information.
  
-You can read the article linked to this app to get a deeper understanding of these two clients. 
-
+You can read the article linked to this app to better understand these two clients. 
 
