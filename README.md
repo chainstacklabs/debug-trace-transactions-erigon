@@ -1,6 +1,8 @@
 # Webapp | Debug and trace transactions with Erigon and Geth
 
-This app allows you to test the ```debug``` and ```trace``` modules offered by the Erigon and Go Ethereum clients. 
+This app allows you to test the ```debug``` and ```trace``` modules offered by the Erigon and Go Ethereum clients.
+
+For an in-depth comparison and inner working of **Geth** and **Erigon**, see: [Ethereum clients—Geth and Erigon](https://chainstack.com/ethereum-clients-geth-and-erigon/).
 
 > **Note** You need to query a node running <b>Erigon</b> to be able to ```trace``` a transaction.
 
